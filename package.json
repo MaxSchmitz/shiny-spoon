@@ -1,0 +1,23 @@
+{
+  "name": "shiny-spoon",
+  "version": "1.0.0",
+  "description": "orca kujira bidder",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaxSchmitz/shiny-spoon.git"
+  },
+  "author": "Max",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MaxSchmitz/shiny-spoon/issues"
+  },
+  "homepage": "https://github.com/MaxSchmitz/shiny-spoon#readme",
+  "dependencies": {
+    "@terra-money/terra.js": "^3.0.11"
+  }
+}
