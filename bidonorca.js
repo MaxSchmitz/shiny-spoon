@@ -20,6 +20,12 @@ const terra = new LCDClient({
 //   chainID: 'localterra'
 // });
 
+// connect to columbus-5 mainnet
+// const terra = new LCDClient({
+//   URL: 'https://lcd.terra.dev',
+//   chainID: 'columbus-5',
+// });
+
 // a wallet can be created out of any key
 // wallets abstract transaction building
 const wallet = terra.wallet(mk);
@@ -33,7 +39,7 @@ const executeMsg = {"submit_bid": {"premium_slot": 1, "collateral_token": "terra
 
 const execute = new MsgExecuteContract(
   wallet.key.accAddress, // sender
-  contract_address[0], // contract account address
+  contract_address[0], // orca testnet contract account address
   { ...executeMsg }, // handle msg
   { uusd: 1000000 } // coins  { "denom": "uusd", "amount": "1000000", "key": 0 }
 );
