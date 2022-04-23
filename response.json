@@ -1,0 +1,76 @@
+{
+  "bids": [
+    {
+      "collateral_token": "terra1kc87mu460fwkqte29rquh4hc20m54fxwtsx7gp",
+      "premium_slot": 5,
+      "bidder": "terra17ewvzl9tlkg5guhrct99luvgjly4m96dk6qrd8",
+      "idx": 43933,
+      "bid_idx": null,
+      "strategy": {
+        "activate_at": {
+          "ltv": 99,
+          "cumulative_value": "1000000000000"
+        },
+        "deactivate_at": {
+          "ltv": 99,
+          "cumulative_value": "100000000000"
+        }
+      },
+      "amount": "811580935",
+      "prev_exchange_rate": "1.234530599113776676",
+      "proxied_bid": null
+    },
+    {
+      "collateral_token": "terra1kc87mu460fwkqte29rquh4hc20m54fxwtsx7gp",
+      "premium_slot": 5,
+      "bidder": "terra17ewvzl9tlkg5guhrct99luvgjly4m96dk6qrd8",
+      "idx": 44622,
+      "bid_idx": null,
+      "strategy": {
+        "activate_at": {
+          "ltv": 99,
+          "cumulative_value": "1000000000000"
+        },
+        "deactivate_at": {
+          "ltv": 99,
+          "cumulative_value": "100000000000"
+        }
+      },
+      "amount": "4371147",
+      "prev_exchange_rate": "1.234530632264758766",
+      "proxied_bid": null
+    },
+    {
+      "collateral_token": "terra1kc87mu460fwkqte29rquh4hc20m54fxwtsx7gp",
+      "premium_slot": 1,
+      "bidder": "terra17ewvzl9tlkg5guhrct99luvgjly4m96dk6qrd8",
+      "idx": 46853,
+      "bid_idx": "650967",
+      "strategy": {
+        "activate_at": {
+          "ltv": 99,
+          "cumulative_value": "1000000000000"
+        },
+        "deactivate_at": {
+          "ltv": 99,
+          "cumulative_value": "100000000000"
+        }
+      },
+      "amount": "0",
+      "prev_exchange_rate": "1.234525975551937913",
+      "proxied_bid": {
+        "idx": "650967",
+        "collateral_token": "terra1kc87mu460fwkqte29rquh4hc20m54fxwtsx7gp",
+        "premium_slot": 1,
+        "bidder": "terra13nk2cjepdzzwfqy740pxzpe3x75pd6g0grxm2z",
+        "amount": "0",
+        "product_snapshot": "1",
+        "sum_snapshot": "0",
+        "pending_liquidated_collateral": "131128",
+        "wait_end": null,
+        "epoch_snapshot": "323",
+        "scale_snapshot": "0"
+      }
+    }
+  ]
+}
