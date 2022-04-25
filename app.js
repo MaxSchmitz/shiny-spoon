@@ -4,11 +4,17 @@ const mk = new MnemonicKey({
   mnemonic: process.env.MNEMONIC,
 });
 
-// connect to columbus-5 mainnet
+// connect to columbus-5 mainnet through quicknode endpoint
 const terra = new LCDClient({
-  URL: 'https://lcd.terra.dev',
-  chainID: 'columbus-5',
-});
+	URL: 'https://divine-spring-glitter.terra-mainnet.quiknode.pro/3caffc39244bcd807ad92c93aced227c6d5bb160/',
+	chainID: 'columbus-5',
+  });
+
+// connect to columbus-5 mainnet
+// const terra = new LCDClient({
+//   URL: 'https://lcd.terra.dev',
+//   chainID: 'columbus-5',
+// });
 
 const wallet = terra.wallet(mk);
 
@@ -309,7 +315,7 @@ async function runOrcaArb(threshold=1) {
 			submitBid(my_aust);
 		}
 	} else {
-		console.log(`Nothing to do. Retrying in ${retry_interval/600000} Minutes			${Date()}`);
+		console.log(`Nothing to do. Retrying in ${retry_interval/60000} Minutes			${Date()}`);
 	}
 }
 

@@ -59,5 +59,5 @@ async function anchorDeposit(uust_amount) {
 const deposit_amount = await getCW20Balance(aust_contract_address) - 10000000;
 console.log(`deposit amount is ${deposit_amount}`);
 
-// this will deposit and amount in uust to anchor earn on MAINNET
+// this will deposit an amount in uust to anchor earn on MAINNET
 // anchorDeposit("1000000");

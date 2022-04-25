@@ -55,7 +55,8 @@ async function getAustBalance() {
 	return response.balance;
 }
 
-
+// https://docs.terraswap.io/docs/reference/router/
+// https://docs.astroport.fi/astroport/smart-contracts/router
 
 const my_bluna_balance = await getbLunaBalance();
 console.log(`wallet bluna balance: ${my_bluna_balance}`);
