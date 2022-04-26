@@ -1,5 +1,7 @@
 import { LCDClient, MsgSend, MnemonicKey, MsgExecuteContract, Coins, Coin } from '@terra-money/terra.js';
+import dotenv from "dotenv";
 
+dotenv.config();
 const mk = new MnemonicKey({
   mnemonic: process.env.MNEMONIC,
 });
