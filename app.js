@@ -315,7 +315,7 @@ async function runOrcaArb(threshold=1) {
 			submitBid(my_aust);
 		}
 	} else {
-		console.log(`Nothing to do. Retrying in ${retry_interval/60000} Minutes			${Date()}`);
+		console.log(`Nothing to do. Retrying in ${retry_interval/60000} Minutes		${Date()}`);
 	}
 }
 
@@ -323,7 +323,8 @@ const claimable_bLuna = 0;
 // retry interval in millseconds
 const retry_interval = 60000;
 
-console.log(`Starting Orca Arbs			${Date()}`);
+console.log(`Starting Orca Arbs ${Date()}`);
+console.log(`Address:  ${wallet.key.accAddress}`);
 // run on interval
 setInterval(runOrcaArb, retry_interval);
 
