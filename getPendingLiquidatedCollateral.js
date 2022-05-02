@@ -2,15 +2,22 @@ import { LCDClient, MsgSend, MnemonicKey, MsgExecuteContract, Coins, Coin } from
 import dotenv from "dotenv";
 
 dotenv.config();
+
 const mk = new MnemonicKey({
   mnemonic: process.env.MNEMONIC,
 });
 
 // connect to columbus-5 mainnet through quicknode endpoint
 const terra = new LCDClient({
-	URL: 'https://divine-spring-glitter.terra-mainnet.quiknode.pro/3caffc39244bcd807ad92c93aced227c6d5bb160/',
+	URL: `https://divine-spring-glitter.terra-mainnet.quiknode.pro/${process.env.AUTH_TOKEN}/`,
 	chainID: 'columbus-5',
   });
+
+// connect to columbus-5 mainnet
+// const terra = new LCDClient({
+//   URL: 'https://lcd.terra.dev',
+//   chainID: 'columbus-5',
+// });
 
 const wallet = terra.wallet(mk);
 
@@ -38,7 +45,7 @@ async function getPendingLiquidatedCollateral() {
 	// console.log(response.bids.length);
 	// console.log(response.bids[0].idx);
 	for (const x of response.bids) {
-		liquidated_collateral += x.proxied_bid.pending_liquidated_collateral;
+		liquidated_collateral += x?.proxied_bid?.pending_liquidated_collateral;
 		// console.log(x.proxied_bid.idx);
 		// console.log(x.proxied_bid.pending_liquidated_collateral);
 	}

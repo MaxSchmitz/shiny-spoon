@@ -7,11 +7,17 @@ const mk = new MnemonicKey({
   mnemonic: process.env.MNEMONIC,
 });
 
-// connect to columbus-5 mainnet
+// connect to columbus-5 mainnet through quicknode endpoint
 const terra = new LCDClient({
-  URL: 'https://lcd.terra.dev',
-  chainID: 'columbus-5',
-});
+	URL: `https://divine-spring-glitter.terra-mainnet.quiknode.pro/${process.env.AUTH_TOKEN}/`,
+	chainID: 'columbus-5',
+  });
+
+// connect to columbus-5 mainnet
+// const terra = new LCDClient({
+//   URL: 'https://lcd.terra.dev',
+//   chainID: 'columbus-5',
+// });
 
 const wallet = terra.wallet(mk);
 

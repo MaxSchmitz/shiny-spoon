@@ -73,11 +73,14 @@ async function getPendingLiquidatedCollateral() {
 	// console.log(response);
 	// console.log(response.bids.length);
 	// console.log(response.bids[0].idx);
-	for (const x of response.bids) {
-		liquidated_collateral += x.proxied_bid.pending_liquidated_collateral;
-		// console.log(x.proxied_bid.idx);
-		// console.log(x.proxied_bid.pending_liquidated_collateral);
+	if (response) {
+		for (const x of response.bids) {
+			liquidated_collateral += x?.proxied_bid?.pending_liquidated_collateral;
+			// console.log(x.proxied_bid.idx);
+			// console.log(x.proxied_bid.pending_liquidated_collateral);
+		}
 	}
+	
 	return liquidated_collateral;
 }
 
@@ -291,7 +294,7 @@ async function submitBid(amount_str, premium_slot = 3) {
 // 
 // 
 // 
-async function runOrcaArb(threshold=1) {
+async function runOrcaArb(threshold=1000000) {
 	const pending_liquidated_collateral = await getPendingLiquidatedCollateral();
 	console.log(`Pending Liquidated Collateral: ${pending_liquidated_collateral}`);
 	if (pending_liquidated_collateral > threshold) {
@@ -300,9 +303,10 @@ async function runOrcaArb(threshold=1) {
 		console.log(`Claiming bLuna from liquidations Orca aUST Vault`);
 		const claimTxHash = await claimLiquidations(my_bids);
 		console.log(`claim luna Tx: ${claimTxHash}`);
-		const my_bluna = await getCW20Balance(bluna_contract_address);
-		console.log(`ubLuna in wallet is ${my_bluna}`)
+		
 	}
+	const my_bluna = await getCW20Balance(bluna_contract_address);
+	console.log(`ubLuna in wallet is ${my_bluna}`)
 	if (my_bluna > threshold) {
 		console.log(`Simulating swap bLUNA -> LUNA -> UST`)
 		const minimum_receive = await simulateSwap(my_bluna);
@@ -314,7 +318,7 @@ async function runOrcaArb(threshold=1) {
 	console.log(`uUST in wallet is ${my_ust[0].amount}`);
 	if (my_ust[0].amount > 10000000) {
 		console.log(`Depositing Stable uUST on Anchor Market`);
-		const deposit_amount = await getCW20Balance(aust_contract_address) - 10000000;
+		const deposit_amount = my_ust[0].amount - 10000000;
 		console.log(`Deposit amount is ${deposit_amount}`);
 		const anchorHashTx = await anchorDeposit(deposit_amount);
 		console.log(`anchor deposit Tx: ${anchorHashTx}`);
@@ -331,7 +335,7 @@ async function runOrcaArb(threshold=1) {
 
 const claimable_bLuna = 0;
 // retry interval in millseconds
-const retry_interval = 60000;
+const retry_interval = 300000;
 
 console.log(`Starting Orca Arbs ${Date()}`);
 console.log(`Address:  ${wallet.key.accAddress}`);
