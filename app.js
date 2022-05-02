@@ -1,5 +1,6 @@
 import { LCDClient, MsgSend, MnemonicKey, MsgExecuteContract, Coins, Coin } from '@terra-money/terra.js';
 import dotenv from "dotenv";
+import {getBalance, getCW20Balance} from './getbalance.js';
 
 dotenv.config();
 
@@ -7,9 +8,10 @@ const mk = new MnemonicKey({
   mnemonic: process.env.MNEMONIC,
 });
 
+
 // connect to columbus-5 mainnet through quicknode endpoint
 const terra = new LCDClient({
-	URL: 'https://divine-spring-glitter.terra-mainnet.quiknode.pro/3caffc39244bcd807ad92c93aced227c6d5bb160/',
+	URL: `https://divine-spring-glitter.terra-mainnet.quiknode.pro/${process.env.AUTH_TOKEN}/`,
 	chainID: 'columbus-5',
   });
 
@@ -33,18 +35,9 @@ const router_contract_address = 'terra16t7dpwwgx9n3lq6l6te3753lsjqwhxwpday9zx';
 const anchor_market_contract_address = 'terra1sepfj7s0aeg5967uxnfk4thzlerrsktkpelm5s';
 
 
-async function getBalance() {
-	const [balance] = await terra.bank.balance(wallet.key.accAddress);
-	// console.log(balance.toData());
-	return balance.toData();
-}
-
-async function getCW20Balance(contract_address) {
-	const response = await terra.wasm.contractQuery(contract_address, { balance: { address: wallet.key.accAddress }});
-	console.log(response);
-	return response.balance;
-}
-
+// 
+// 
+// 
 async function getIdxs() {
 	let bids_idx = [];
 	const queryMsg = {
@@ -58,13 +51,16 @@ async function getIdxs() {
 	// console.log(response.bids.length);
 	// console.log(response.bids[0].idx);
 	for (const x of response.bids) {
-		bids_idx.push(x.proxied_bid.idx);
+		bids_idx.push(x.idx);
 		// console.log(x.proxied_bid.idx);
 		// console.log(x.proxied_bid.pending_liquidated_collateral);
 	}
 	return bids_idx;
 }
 
+// 
+// 
+// 
 async function getPendingLiquidatedCollateral() {
 	let liquidated_collateral = 0;
 	const queryMsg = {
@@ -85,33 +81,35 @@ async function getPendingLiquidatedCollateral() {
 	return liquidated_collateral;
 }
 
-function claimLiquidations(bids_idx) {
+// 
+// 
+// 
+async function claimLiquidations(bids_idx) {
 	// executeMsg Claim Liquidations on Orca aUST Vault on Columbus-5 Mainnet
 	const executeMsg = {
 	  "claim_liquidations": {
-	    "bids_idx": bids_idx,
-	    "collateral_token": bluna_contract_address
+		"bids_idx": bids_idx,
+		"collateral_token": "terra1kc87mu460fwkqte29rquh4hc20m54fxwtsx7gp"
 	  }
-	};
-
+	}
+  
 	const execute = new MsgExecuteContract(
 	  wallet.key.accAddress, // sender
 	  orca_contract_address, // contract account address
 	  { ...executeMsg } // handle msg
 	);
-
-
-	wallet
-	  .createAndSignTx({
-	    msgs: [execute],
-	    memo: 'claim liquidations on orca!',
-	  })
-	  .then(tx => terra.tx.broadcast(tx))
-	  .then(result => {
-	    console.log(`TX hash: ${result.txhash}`);
-	  });
+  
+	console.log(executeMsg);
+  
+	const tx = await wallet.createAndSignTx({ msgs: [execute] });
+	const result = await terra.tx.broadcast(tx);
+  
+	return result.txhash;
 }
 
+// 
+// 
+// 
 async function simulateSwap(offer_amount="123") {
     const queryMsg = {
         "simulate_swap_operations": {
@@ -145,6 +143,9 @@ async function simulateSwap(offer_amount="123") {
 	return response.amount;
 }
 
+// 
+// 
+// 
 async function swapbLunaUst(offer_amount, minimum_receive, max_spread="0.15") {
 
 	const swapMsg = {
@@ -199,8 +200,12 @@ async function swapbLunaUst(offer_amount, minimum_receive, max_spread="0.15") {
 	const result = await terra.tx.broadcast(tx);
   
 	console.log(result);
+	return result;
   }  
 
+// 
+// 
+// 
 async function anchorDeposit(uust_amount) {
   
     const executeMsg = {
@@ -229,10 +234,14 @@ async function anchorDeposit(uust_amount) {
     const tx = await wallet.createAndSignTx({ msgs: [execute] });
     const result = await terra.tx.broadcast(tx);
   
-    console.log(result);
+    // console.log(result);
+	return result;
   }  
 
-function submitBid(amount_str, premium_slot = 2) {
+// 
+// 
+// 
+async function submitBid(amount_str, premium_slot = 3) {
 	
 	const submitMsg = {
 		"submit_bid": {
@@ -240,12 +249,12 @@ function submitBid(amount_str, premium_slot = 2) {
 		  "collateral_token": "terra1kc87mu460fwkqte29rquh4hc20m54fxwtsx7gp",
 		  "strategy": {
 			"activate_at": {
-			  "ltv": 99,
-			  "cumulative_value": "1000000000000"
+			  "ltv": 98,
+			  "cumulative_value": "500000000000"
 			},
 			"deactivate_at": {
 			  "ltv": 99,
-			  "cumulative_value": "100000000000"
+			  "cumulative_value": "50000000000"
 			}
 		  }
 		}
@@ -278,14 +287,10 @@ function submitBid(amount_str, premium_slot = 2) {
 	  });		  
 }
 
-// const wallet_balance = await getBalance();
-// console.log(`current wallet balance: ${wallet_balance[0].amount}`);
-// const anchor_balance = await getAnchorBalance();
-// console.log(`current anchor balance: ${anchor_balance.balance}`);
-// const my_bids = await getIdxs();
-// console.log(`bid idxs: ${my_bids}`);
 
-
+// 
+// 
+// 
 async function runOrcaArb(threshold=1) {
 	const pending_liquidated_collateral = await getPendingLiquidatedCollateral();
 	console.log(`Pending Liquidated Collateral: ${pending_liquidated_collateral}`);
@@ -293,33 +298,35 @@ async function runOrcaArb(threshold=1) {
 		console.log(`Getting bids`);
 		const my_bids = await getIdxs();
 		console.log(`Claiming bLuna from liquidations Orca aUST Vault`);
-		claimLiquidations(my_bids);
+		const claimTxHash = await claimLiquidations(my_bids);
+		console.log(`claim luna Tx: ${claimTxHash}`);
 		const my_bluna = await getCW20Balance(bluna_contract_address);
 		console.log(`ubLuna in wallet is ${my_bluna}`)
-		if (my_bluna > 0) {
-			console.log(`Simulating swap bLUNA -> LUNA -> UST`)
-			const minimum_receive = await simulateSwap(my_bluna);
-			console.log(`Expecting ${minimum_receive-1000} uUST for ${my_bluna} ubluna`)
-			console.log(`Executing Swap Operations on Astroport Router`);
-			swapbLunaUst(my_bluna, minimum_receive-1000);
-		}
-		const my_ust = await getBalance();
-		console.log(`uUST in wallet is ${my_ust[0].amount}`);
-		if (my_ust[0].amount > 10000000) {
-			console.log(`Depositing Stable uUST on Anchor Market`);
-			const deposit_amount = await getCW20Balance(aust_contract_address) - 10000000;
-			console.log(`Deposit amount is ${deposit_amount}`);
-			anchorDeposit(deposit_amount);
-		}
-		const my_aust = await getCW20Balance(aust_contract_address);
-		console.log(`uaUST in wallet is ${my_aust} `)
-		if (my_aust > 0) {
-			console.log(`Submiting aUST Bid on Orca UST Vault`);
-			submitBid(my_aust);
-		}
-	} else {
-		console.log(`Nothing to do. Retrying in ${retry_interval/60000} Minutes		${Date()}`);
 	}
+	if (my_bluna > threshold) {
+		console.log(`Simulating swap bLUNA -> LUNA -> UST`)
+		const minimum_receive = await simulateSwap(my_bluna);
+		console.log(`Expecting ${minimum_receive-1000} uUST for ${my_bluna} ubluna`)
+		console.log(`Executing Swap Operations on Astroport Router`);
+		await swapbLunaUst(my_bluna, minimum_receive-1000);
+	}
+	const my_ust = await getBalance();
+	console.log(`uUST in wallet is ${my_ust[0].amount}`);
+	if (my_ust[0].amount > 10000000) {
+		console.log(`Depositing Stable uUST on Anchor Market`);
+		const deposit_amount = await getCW20Balance(aust_contract_address) - 10000000;
+		console.log(`Deposit amount is ${deposit_amount}`);
+		const anchorHashTx = await anchorDeposit(deposit_amount);
+		console.log(`anchor deposit Tx: ${anchorHashTx}`);
+	}
+	const my_aust = await getCW20Balance(aust_contract_address);
+	console.log(`uaUST in wallet is ${my_aust} `)
+	if (my_aust > 100) {
+		console.log(`Submiting aUST Bid on Orca UST Vault`);
+		await submitBid(my_aust);
+	}
+	console.log(`Nothing left to do. Retrying in ${retry_interval/60000} Minutes		${Date()}`);
+
 }
 
 const claimable_bLuna = 0;
@@ -331,21 +338,3 @@ console.log(`Address:  ${wallet.key.accAddress}`);
 // run on interval
 setInterval(runOrcaArb, retry_interval);
 
-
-// testing area
-// // gets bluna balance, swaps bluna -> ust
-// const my_bluna = await getCW20Balance(bluna_contract_address);
-// console.log(`ubLuna in wallet is ${my_bluna}`)
-// const minimum_receive = await simulateSwap(my_bluna);
-// console.log(`Expecting ${minimum_receive-1000} uUST for ${my_bluna} ubluna`)
-// // swapbLunaUst(my_bluna, minimum_receive-1000);
-// const my_ust = await getBalance();
-// console.log(`uUST in wallet is ${my_ust[0].amount}`);
-// console.log(`Depositing Stable uUST on Anchor Market`);
-// const deposit_amount = await getCW20Balance(aust_contract_address) - 10000000;
-// console.log(`Deposit amount is ${deposit_amount}`);
-// // anchorDeposit(deposit_amount);
-// const my_aust = await getCW20Balance(aust_contract_address);
-// console.log(`uaUST in wallet is ${my_aust} `)
-// console.log(`Submiting aUST Bid on Orca UST Vault`);
-// // submitBid(my_aust);

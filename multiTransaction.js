@@ -11,10 +11,16 @@ const mk = new MnemonicKey({
 });
 
 // connect to columbus-5 mainnet through quicknode endpoint
+// const terra = new LCDClient({
+// 	URL: 'https://divine-spring-glitter.terra-mainnet.quiknode.pro/3caffc39244bcd807ad92c93aced227c6d5bb160/',
+// 	chainID: 'columbus-5',
+//   });
+
+// connect to columbus-5 mainnet
 const terra = new LCDClient({
-	URL: 'https://divine-spring-glitter.terra-mainnet.quiknode.pro/3caffc39244bcd807ad92c93aced227c6d5bb160/',
-	chainID: 'columbus-5',
-  });
+  URL: 'https://lcd.terra.dev',
+  chainID: 'columbus-5',
+});
 
 // a wallet can be created out of any key
 // wallets abstract transaction building
@@ -30,6 +36,8 @@ const orca_contract_address = 'terra13nk2cjepdzzwfqy740pxzpe3x75pd6g0grxm2z';
 const router_contract_address = 'terra16t7dpwwgx9n3lq6l6te3753lsjqwhxwpday9zx';
 // Anchor Market
 const anchor_market_contract_address = 'terra1sepfj7s0aeg5967uxnfk4thzlerrsktkpelm5s';
+// White Whale UST Vault
+const white_whale_contract_address = 'terra1ec3r2esp9cqekqqvn0wd6nwrjslnwxm7fh8egy';
 
 // We need to pass bids_idx to the claim liquidations msg
 // Get bids_idx first
@@ -77,6 +85,7 @@ async function claimLiquidations(bids_idx) {
 
   return result.txhash;
 }
+
 
 console.log('claiming bluna');
 const claimTxHash = await claimLiquidations(bids_idx);

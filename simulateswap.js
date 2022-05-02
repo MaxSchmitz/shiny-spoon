@@ -1,4 +1,7 @@
 import { LCDClient, MsgSend, MnemonicKey, MsgExecuteContract, Coins, Coin } from '@terra-money/terra.js';
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const mk = new MnemonicKey({
   mnemonic: process.env.MNEMONIC,
@@ -10,16 +13,16 @@ const mk = new MnemonicKey({
 // });
 
 // connect to columbus-5 mainnet
-// const terra = new LCDClient({
-//   URL: 'https://lcd.terra.dev',
-//   chainID: 'columbus-5',
-// });
+const terra = new LCDClient({
+  URL: 'https://lcd.terra.dev',
+  chainID: 'columbus-5',
+});
 
 // connect to columbus-5 mainnet through quicknode endpoint
-const terra = new LCDClient({
-	URL: 'https://divine-spring-glitter.terra-mainnet.quiknode.pro/3caffc39244bcd807ad92c93aced227c6d5bb160/',
-	chainID: 'columbus-5',
-  });
+// const terra = new LCDClient({
+// 	URL: 'https://divine-spring-glitter.terra-mainnet.quiknode.pro/3caffc39244bcd807ad92c93aced227c6d5bb160/',
+// 	chainID: 'columbus-5',
+//   });
 
 
 const wallet = terra.wallet(mk);
@@ -27,9 +30,7 @@ const wallet = terra.wallet(mk);
 const router_contract_address = 'terra16t7dpwwgx9n3lq6l6te3753lsjqwhxwpday9zx';
 
 // Simulate bLUNA -> LUNA -> UST
-async function simulateSwap(offer_amount="123") {
-
-    
+export async function simulateSwap(offer_amount="123") {
     const queryMsg = {
         "simulate_swap_operations": {
           "offer_amount": offer_amount,
