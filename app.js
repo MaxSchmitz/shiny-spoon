@@ -203,7 +203,7 @@ async function swapbLunaUst(offer_amount, minimum_receive, max_spread="0.15") {
 	const result = await terra.tx.broadcast(tx);
   
 	console.log(result);
-	return result;
+	return result.txhash;
   }  
 
 // 
@@ -312,7 +312,8 @@ async function runOrcaArb(threshold=1000000) {
 		const minimum_receive = await simulateSwap(my_bluna);
 		console.log(`Expecting ${minimum_receive-1000} uUST for ${my_bluna} ubluna`)
 		console.log(`Executing Swap Operations on Astroport Router`);
-		await swapbLunaUst(my_bluna, minimum_receive-1000);
+		const swapTxHash = await swapbLunaUst(my_bluna, minimum_receive-1000);
+		console.log(`swap bluna Tx: ${swapTxHash}`);
 	}
 	const my_ust = await getBalance();
 	console.log(`uUST in wallet is ${my_ust[0].amount}`);
@@ -327,7 +328,7 @@ async function runOrcaArb(threshold=1000000) {
 	console.log(`uaUST in wallet is ${my_aust} `)
 	if (my_aust > 100) {
 		console.log(`Submiting aUST Bid on Orca UST Vault`);
-		await submitBid(my_aust);
+		await submitBid(my_aust, 2);
 	}
 	console.log(`Nothing left to do. Retrying in ${retry_interval/60000} Minutes		${Date()}`);
 
